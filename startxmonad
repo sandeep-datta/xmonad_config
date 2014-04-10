@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#Load resources
+xrdb -merge .Xresources
+
+xrandr --output HDMI-0 --primary --output LVDS-0 --left-of HDMI-0
+ip route del default via 10.0.0.1 dev eth0  proto static
+ip route add default via 192.168.43.1 dev wlan0 proto static
+
+
+# Set up an icon tray
+trayer --edge top --align right --SetDockType true --SetPartialStrut true \
+ --expand true --width 10 --transparent true --tint 0x000000 --height 17 \
+ --monitor primary &
+
+if [ -x /usr/bin/nm-applet ] ; then
+   nm-applet --sm-disable &
+fi
+
+
+# if [ -x /usr/bin/xfce4-power-manager ] ; then
+#    sleep 3
+#    xfce4-power-manager &
+# fi
+
+export LANG=en_US.utf-8
+
+exec xmonad

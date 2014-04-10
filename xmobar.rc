@@ -9,6 +9,8 @@ Config { font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
                     , Run Date "%a %d %b %Y %H:%M" "date" 10
                     , Run StdinReader
                     , Run CommandReader "ledmon" "LED"
+                    , Run Com "amixer get Master | /home/sandeepd/.xmonad/getvolume" [] "vol" 1
+                    , Run DynNetwork ["-t", "<dev>: <rx>KB|<tx>KB"] 10
                     , Run BatteryP ["BAT0"]
                       ["-t", "<acstatus><watts> (<left>%)",
                        "-L", "10", "-H", "80", "-p", "3",
@@ -19,5 +21,5 @@ Config { font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
                     ]
        , sepChar = "%"
        , alignSep = "}{"
-       , template = "%StdinReader% }{ <fc=#ffff00>%LED%</fc> | %battery% | %cpu% | %memory% | %swap%  <fc=#ee9a00>%date%</fc>"
+       , template = "%StdinReader% }{ %dynnetwork% | <fc=#ffff00>%LED%</fc> | %battery% | %cpu% | %memory% | %swap% | %vol%  <fc=#ee9a00>%date%</fc>"
        }

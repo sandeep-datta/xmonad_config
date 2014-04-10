@@ -16,6 +16,7 @@ import XMonad.Layout.ThreeColumns
 
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeys)
+import Graphics.X11.ExtraTypes.XF86
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map as M
@@ -34,7 +35,7 @@ myModMask = mod4Mask
 -- Workspaces
 -- The default number of workspaces (virtual screens) and their names.
 --
-myWorkspaces = ["1:web","2:fplane","3:editor","4:dev","5:media"] ++ map show [6..9]
+myWorkspaces = ["web","fplane","dev","qt","media"] ++ map show [6..9]
 
 ------------------------------------------------------------------------
 -- Window rules
@@ -50,12 +51,14 @@ myWorkspaces = ["1:web","2:fplane","3:editor","4:dev","5:media"] ++ map show [6.
 -- To match on the WM_NAME, you can use 'title' in the same way that
 -- 'className' and 'resource' are used below.
 --
+
+{-
 myManageHook = composeAll
-    [ className =? "Firefox" --> doShift "1:web"
-    , className =? "Google-chrome" --> doShift "1:web"
-    , className =? "Sublime_text" --> doShift "3:editor"
-    , className =? "sublime_text" --> doShift "3:editor"
-    , className =? "QtCreator" --> doShift "4:dev"
+    [ className =? "Firefox" --> doShift "web"
+    , className =? "Google-chrome" --> doShift "web"
+    , className =? "Sublime_text" --> doShift "dev"
+    , className =? "sublime_text" --> doShift "dev"
+    , className =? "QtCreator" --> doShift "qt"
     , title     =? "QtCreator" --> doIgnore
     , title     =? "Google - Bookmarks - Mozilla Firefox" --> doIgnore
     , resource  =? "desktop_window" --> doIgnore
@@ -68,6 +71,7 @@ myManageHook = composeAll
     , className =? "Xchat" --> doShift "5:media"
     , className =? "stalonetray" --> doIgnore
     , isFullscreen --> (doF W.focusDown <+> doFullFloat)]
+-}
 
 -- make sure to edit paths to xmobar and .xmobarrc to match your system.
 -- If xmobar is in your $PATH, and its config is in ~/.xmobarrc you don't
@@ -82,8 +86,8 @@ myManageHook = composeAll
 -- By default, do nothing.
 myStartupHook = do
     setWMName "LG3D"
+    -- spawn "/home/sandeepd/bin/startup"
     {-
-    spawn "~/bin/startup"
     spawn "firefox"
     spawn "sublime_text"
     spawn "gnome-terminal"
@@ -92,9 +96,9 @@ myStartupHook = do
 
 
 main = do
-    xmproc <- spawnPipe "xmobar"
-    xmonad $ ewmh defaultConfig
-        { manageHook    = manageDocks <+> myManageHook <+> manageHook defaultConfig
+    xmproc <- spawnPipe "xmobar ~/.xmonad/xmobar.rc"
+    xmonad $ defaultConfig
+        { manageHook    = manageDocks <+> manageHook defaultConfig
         , layoutHook    = avoidStruts  $  layoutHook defaultConfig
         , startupHook   = myStartupHook
         , logHook       = dynamicLogWithPP xmobarPP
@@ -103,10 +107,14 @@ main = do
                             }
         , modMask       = myModMask
         , workspaces    = myWorkspaces
+        , terminal      = "gnome-terminal"
         } `additionalKeys`
         [ --((myModMask, xK_l),        spawn "xscreensaver-command -lock")
           ((myModMask, xK_Print),    spawn "sleep 0.2; scrot -s")
         , ((0, xK_Print),            spawn "scrot")
         , ((myModMask, xK_p),        spawn "exec $(yeganesh -x -- -fn '-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*' -nb '#000000' -nf '#FFFFFF' -sb '#7C7C7C' -sf '#CEFFAC')")
-        , ((myModMask, xK_c),          kill) -- Close focused window
+        , ((myModMask, xK_c),        kill) -- Close focused window
+        , ((0 ,                      xF86XK_AudioLowerVolume), spawn "amixer set Master on && amixer set Headphone on && amixer set Master 2-")
+        , ((0 ,                      xF86XK_AudioRaiseVolume), spawn "amixer set Master on && amixer set Headphone on && amixer set Master 2+")
+        , ((0 ,                      xF86XK_AudioMute), spawn "amixer set Master toggle && amixer set Headphone toggle")
         ]

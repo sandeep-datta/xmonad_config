@@ -1,0 +1,3 @@
+h1. XMONAD Configuration files
+
+Configuration files/scripts related to xmonad and associated utilities.

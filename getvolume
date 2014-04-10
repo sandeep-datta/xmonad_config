@@ -14,6 +14,6 @@ _,_,_,vol,_,state = list(filter(lambda s: s != '', re.split(r'\[|\]|\s+', lastLi
 if state == "off":
     print("MUTE")
 else:
-    print(vol)
+    print(" " + vol)
 
 
